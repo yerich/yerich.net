@@ -1,2 +1,3 @@
 RewriteEngine on
 RewriteRule blog/(.+)$ blog.php?name=$1
+RewriteRule blog.rss$ blogrss.php
