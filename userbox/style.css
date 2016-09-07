@@ -1,0 +1,170 @@
+body {
+	font-family: tahoma, sans-serif;
+	font-size: 12px;
+}
+
+#wrapper {
+	width: 900px;
+	margin: 0 auto;
+	padding: 30px;
+}
+#header {
+	padding-bottom: 8px;
+	border-bottom: 1px solid #EEE;
+}
+#titletop, #author {
+	color: #666;
+	font-size: 9px;
+	padding-left: 2px;
+}
+#titleuserbox {
+	color: #5BA2FF;
+	font-size: 32px;
+}
+#titlemaker {
+	color: #B7B7B7;
+	font-size: 32px;
+}
+#result {
+	width: 340px;
+	float: right;
+	background: #EAFFDD;
+	margin-top: 20px;
+	height: 405px;
+}
+#create {
+	float: left;
+	margin-top: 20px;
+	width: 520px;
+	background: #FFEFDB;
+	height: 405px;
+}
+#tabby {
+	list-style-type: none;
+	padding: 0;
+	border-bottom: 1px solid #FFD39E;
+	margin: 0;
+	background: #FFF;
+}
+#rtabby {
+	list-style-type: none;
+	padding: 0;
+	border-bottom: 1px solid #CBFFAD;
+	margin: 0;
+	background: #FFF;
+}
+#tabby li { 
+	display: inline;
+	margin-left: 6px;
+	border: 1px solid #FFD39E;
+	padding: 3px;
+	position: relative;
+	bottom: 3px;
+	background: #FFD39E;
+	cursor: pointer;
+}
+#rtabby li { 
+	display: inline;
+	margin-left: 6px;
+	border: 1px solid #CBFFAD;
+	padding: 3px;
+	position: relative;
+	bottom: 3px;
+	background: #CBFFAD;
+	cursor: pointer;
+}
+.selected, #tabby li:hover {
+	background: #FFEFDB !important;
+	border-bottom: 1px solid #FFEFDB !important;
+}
+.rselected, #rtabby li:hover {
+	background: #EAFFDD !important;
+	border-bottom: 1px solid #EAFFDD !important;
+}
+.fieldgroup {
+	padding: 15px;
+	height: 350px;
+	overflow: auto;
+}
+.rfieldgroup {
+	padding: 15px;
+	height: 350px;
+	overflow: auto;
+}
+
+#mainform { clear: both; background: #FFEFDB; padding: 5px;}
+
+.userbox { width: 239px; font-family: sans-serif; border: 1px solid; border-collapse: collapse;}
+.id { height: 45px; width: 45px; text-align: center; font-size:12pt; border: 1px solid; font-weight: bold;}
+.info { padding: 0 4pt; border: 1px solid; font-size: 8pt;}
+
+.line {
+	border-bottom: 1px solid #AAA;
+	margin: 5px;
+	display: block;
+}
+
+/*forms*/
+
+label {
+	display: block;
+}
+input {
+	border: 1px solid #FFBC70;
+	width: 95%;
+	margin: 1px auto 6px auto;
+}
+input.big {
+	height: 22px;
+	padding: 3px;
+	font-size: 20px;
+	margin: 3px auto 10px auto;
+	width: 471px;
+}
+fieldset {
+	border: 1px solid #FFBC70;
+	margin-bottom: 5px;
+}
+legend {
+	font-weight: bold;
+}
+#colorselect {
+	width: 460px;
+	background: #FFF6ED;
+	height: 320px;
+	overflow: auto;
+	padding: 5px;
+}
+.colorScheme {
+	cursor: pointer;
+	margin-bottom: 2px;
+	margin-right: 2px;
+	float: left;
+}
+.colorScheme .userbox { width: 210px !important;}
+
+
+h1 {
+	font-size: 20px;
+	font-weight: normal;
+	color: #333;
+	margin: 0 0 3px 0;
+}
+h2 {
+	font-size: 16px;
+	font-weight: normal;
+	color: #333;
+	margin: 0 0 3px 0;
+}
+
+.clear {
+	clear: both;
+}
+
+a {
+	color: #1C85FF;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}

@@ -1,0 +1,181 @@
+<p>
+    <strong>TL;DR: </strong> Instead of trying to interpolate the path manually, interpolate <code>stroke-dasharray</code>. Confused? Read on.
+</p>
+
+<!--summary-->
+<script>
+$(function() {
+    var bezierLine = d3.svg.line()
+        .x(function(d) { return d[0]; })
+        .y(function(d) { return d[1]; })
+        .interpolate("basis");
+    
+    var bezier_demo_1 = function() {
+        var svg = d3.select("#bezier-demo-1")
+            .append("svg")
+            .attr("width", 300)
+            .attr("height", 150);
+        
+        svg.append('path')
+            .attr("d", bezierLine([[0, 40], [25, 70], [50, 100], [100, 50], [150, 20], [200, 130], [300, 120]]))
+            .attr("stroke", "red")
+            .attr("stroke-width", 1)
+            .attr("fill", "none");
+    }
+    
+    var bezier_demo_2 = function() {
+        var svg = d3.select("#bezier-demo-2")
+            .append("svg")
+            .attr("width", 300)
+            .attr("height", 150);
+        
+        svg.append('path')
+            .attr("d", bezierLine([[0, 40], [25, 70], [50, 100], [100, 50], [150, 20], [200, 130], [300, 120]]))
+            .attr("stroke", "red")
+            .attr("stroke-width", 1)
+            .attr("fill", "none")
+            .attr("stroke-dasharray", "10, 5");
+    }
+    
+    var bezier_demo_3 = function() {
+        var svg = d3.select("#bezier-demo-3 svg");
+        
+        svg.select('path')
+            .remove();
+        
+        svg.append('path')
+            .attr("d", bezierLine([[0, 40], [25, 70], [50, 100], [100, 50], [150, 20], [200, 130], [300, 120]]))
+            .attr("stroke", "red")
+            .attr("stroke-width", 1)
+            .attr("fill", "none")
+            .transition()
+                .duration(2000)
+                .attrTween("stroke-dasharray", function() {
+                    var len = this.getTotalLength();
+                    return function(t) { return (d3.interpolateString("0," + len, len + ",0"))(t) };
+                });
+    }
+    
+    bezier_demo_1();
+    bezier_demo_2();
+    bezier_demo_3();
+    
+    d3.select("#bezier-demo-3").append("svg");
+    
+    $("#bezier-demo-3-begin").on("click", bezier_demo_3);
+});
+</script>
+
+<p>
+    I was recently faced with the challenge of animating a Bezier curve using the data manipulation and
+    visualization library <a href="http://d3js.org">D3.js</a>, which I eventually accomplished for
+    Shopify's <a href="http://smap.herokuapp.com/">live map of orders</a>. We start off with a fairly
+    rudimentary code to generate a spline:
+</p>
+
+<div id="bezier-demo-1"></div>
+<!--/summary-->
+
+<div class="show-code">
+    <a href="javascript: void 0">Show code</a>
+    <pre class="code"><code class="language-javascript">var bezierLine = d3.svg.line()
+    .x(function(d) { return d[0]; })
+    .y(function(d) { return d[1]; })
+    .interpolate("basis");
+
+var svg = d3.select("#bezier-demo")
+    .append("svg")
+    .attr("width", 300)
+    .attr("height", 150);
+
+svg.append('path')
+    .attr("d", bezierLine([[0, 40], [25, 70], [50, 100], [100, 50], [150, 20], [200, 130], [300, 120]]))
+    .attr("stroke", "red")
+    .attr("stroke-width", 1)
+    .attr("fill", "none");
+</code></pre>
+<pre class="code"><code class="language-markup">&lt;div id="bezier-demo"&gt;&lt;/div&gt;</code></pre>
+</div>
+
+<p>
+    If you have no idea what any of this code means, then I highly recommend you read 
+    <a href="https://www.dashingd3js.com/svg-paths-and-d3js">this excellent tutorial</a> on generating static lines and curves 
+    using D3.js.
+</p>
+
+<p>
+   Now what if we wanted to smoothly animate this curve? An naive approach would be to break the line into bits, and render
+   them one chunk at a time. This approach works, but gets quite complicated as there is no built-in method to break up
+   a spline into chunks. The only way to do this, then, would be to manually compute a Beizier curve. Doing it like that would be an 
+   interesting exercise for some, myself included, there's a far easier way to do it.
+</p>
+
+<p>
+    All SVG paths have a <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-dasharray"><code>stroke-dasharray</code></a>
+    property that was intended to make dashed or dotted lines. It's in the of whitespace or comma seperated values that indicate alternating 
+    dashes and gaps. For instance, rendering our first bezier curve with a <code>stroke-dasharray</code> of <code>10,5</code> will result
+    in a repeating pattern of 10 pixel dashes followed by 5 pixel gaps.
+</p>
+<div id="bezier-demo-2"></div>
+
+<p>
+    Perhaps now you'll see what we're going to do next. Instead of attempting to interpolate the path itself, we're going to interpolate
+    the <code>stroke-dasharray</code> property. This will make the line appear to be animated without having to do any of the computation
+    manually ourselves.
+</p>
+
+<button id="bezier-demo-3-begin">Animate</button>
+<div id="bezier-demo-3"></div>
+
+<div class="show-code">
+    <a href="javascript: void 0">Show code</a>
+    <pre class="code"><code class="language-javascript">var bezierLine = d3.svg.line()
+    .x(function(d) { return d[0]; })
+    .y(function(d) { return d[1]; })
+    .interpolate("basis");
+
+var svg = d3.select("#bezier-demo")
+    .append("svg")
+    .attr("width", 300)
+    .attr("height", 150);
+    
+svg.append('path')
+    .attr("d", bezierLine([[0, 40], [25, 70], [50, 100], [100, 50], [150, 20], [200, 130], [300, 120]]))
+    .attr("stroke", "red")
+    .attr("stroke-width", 1)
+    .attr("fill", "none");
+    .transition()
+        .duration(2000)
+        .attrTween("stroke-dasharray", function() {
+            var len = this.getTotalLength();
+            return function(t) { return (d3.interpolateString("0," + len, len + ",0"))(t) };
+        });
+</code></pre>
+<pre class="code"><code class="language-markup">&lt;div id="bezier-demo"&gt;&lt;/div&gt;</code></pre>
+</div>
+
+<p>
+    We only added a few extra lines of code (the call to <code>transition</code>) to get our animation working.
+    We furst specify the duration, then we tell D3 to tween the <code>stroke-dasharray</code> property according
+    to a function that we specify. In this case, we want it to transition starting from <code>0,len</code>
+    to <code>len,0</code>, where <code>len</code> is the length of our line. This transition starts with the entire
+    line consisting of a single gap the length of the line (and thus completely invisible) to a single dash (and
+    thus completely visible).
+</p>
+
+<p>
+    The function we pass into <code>attrTween</code> as its second argument has to be return another function,
+    which returns a string generated by yet another function <code>d3.interpolateString</code>, which handles
+    the interpolation of our two strings for intermediate values.
+</p>
+
+<p>
+    For more detailed and descriptive information about D3.js transitions, consult the 
+    <a href="https://github.com/mbostock/d3/wiki/Transitions">documentation</a>.
+</p>
+
+<p>
+    For the record, I did not come across this technique until I finished
+    coding up manual calcuations for animating the Bezier curve. I'll write another blog post about that method should someone
+    express their interest in reading it.
+</p>

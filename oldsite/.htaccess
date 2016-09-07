@@ -1,0 +1,2 @@
+RewriteEngine On
+RewriteRule ^redirectloop[0-9]+.jpg$ redirectloop.php

@@ -1,0 +1,79 @@
+<!--summary-->
+<style>
+    .p-outline-bg-demo { display: inline-block; width: 300px; background: url('/images/qnc.jpg') center no-repeat; padding: 130px 0 30px; color: white; text-align: center; font-weight: bold;}
+    #p-outline-bg-text { text-shadow: 1px 1px black, 1px -1px black, -1px -1px black, -1px 1px black;}
+</style>
+
+<p>
+    <code class="language-css">text-outline</code> or <code class="language-css">text-stroke</code> is a convenient CSS property that, as of January 2015, 
+    has very limited support on major browsers. This is a bit of a shame since it is highly useful in certain circumstances, such as
+    overlaying text on top of a background image and still ensuring that it is easily readable.
+</p>
+
+<div class="p-outline-bg-demo">
+    Without text outline
+</div>
+<div id="p-outline-bg-text" class="p-outline-bg-demo">
+    With text outline
+</div>
+<p class="small-note">Photo by <a href="http://commons.wikimedia.org/wiki/File:Quantum_Nano_Center_UW_2013.jpg">JustSomePics</a>, CC-BY-SA.</p>
+<!--/summary-->
+
+<p>
+    Luckily, there's an easy way to approximate a text outline using <code>text-shadow</code>. <code>text-shadow</code> properties have four
+    basic property values:
+</p>
+    
+<blockquote><code class="language-css">text-shadow: offset-x offset-y blur-radius color;</code></blockquote>
+
+<p>
+    By setting <code class="language-css">blur-radius</code> to zero (or leaving it out entirely), <code class="language-css">offset-x</code> 
+    to 1px and <code class="language-css">offset-y</code> to 0px, we can create something that looks like an outline on one side of our (otherwise
+    invisible) white text.
+</p>
+
+<blockquote>
+    <p style="color: white; text-shadow: 1px 0px black; font-size: 30px; font-weight: bold;">This is some text</p>
+</blockquote>
+
+<div class="show-code">
+    <a href="javascript: void 0">Show code</a>
+    <pre class="code"><code class="language-css">p {
+    text-shadow: 1px 0px black;
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+}</code></pre>
+</div>
+
+<p>
+    <code class="language-css">text-shadow</code> lets us specify multiple shadows per element, so let's make a similar shadow in all eight directions.
+</p>
+
+<blockquote>
+    <p style="color: white; text-shadow: 1px 0px black, 1px 1px black, 0px 1px black, -1px 1px black, -1px 0px black, -1px -1px black, 0px -1px black, 1px -1px black; font-size: 30px; font-weight: bold;">This is some text</p>
+</blockquote>
+
+<div class="show-code">
+    <a href="javascript: void 0">Show code</a>
+    <pre class="code"><code class="language-css">p {
+    text-shadow: 
+         1px -1px black,
+         1px  0px black, 
+         1px  1px black, 
+         0px -1px black, 
+         0px  1px black, 
+        -1px -1px black, 
+        -1px  0px black, 
+        -1px  1px black;
+    font-size: 30px;
+    font-weight: bold;
+    color: white;
+}</code></pre>
+</div>
+
+<p>
+    Prety good! If you zoom in and really look closely, you can see the individual shadows causing some imperfections, but this is really only noticible at extreme zoom levels.
+    Overall, this technique is a convenient way to add a stroke or outline, for instance to ensure that text remains readable with a background image. This technique is
+    usable <a href="http://caniuse.com/#feat=css-textshadow">wherever <code>text-shadow</code> is</a>, including IE 10+.
+</p>

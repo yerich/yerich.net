@@ -1,0 +1,2 @@
+RewriteEngine on
+RewriteRule blog/(.+)$ blog.php?name=$1
