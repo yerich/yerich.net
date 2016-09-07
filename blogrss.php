@@ -28,11 +28,14 @@ echo '<?xml version="1.0" encoding="utf-8" ?>';
         preg_match("%<p>.*?<\/p>%s", $contents, $matches);
 
       $title = $post[2];
+      $html = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $matches[0]);
+      $html = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $html);
+      $html = strip_tags($html);
 
       ?>
       <item>
         <title><?= $title ?></title>
-        <description><?= strip_tags($matches[0]); ?>.</description>
+        <description><?= $html ?>.</description>
         <link><a href="/blog/<?= $post[1] ?>"><?= $title ?></a></link>
         <pubDate><?= date("r", $date) ?></pubDate>
       </item>
