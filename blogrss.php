@@ -32,7 +32,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>';
       ?>
       <item>
         <title><?= $title ?></title>
-        <description><?= $matches[0]; ?>.</description>
+        <description><?= strip_tags($matches[0]); ?>.</description>
         <link><a href="/blog/<?= $post[1] ?>"><?= $title ?></a></link>
         <pubDate><?= date("r", $date) ?></pubDate>
       </item>
