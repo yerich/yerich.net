@@ -29,7 +29,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>';
 
       $title = $post[2];
       $html = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $matches[0]);
-      $html = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $html);
+      $html = preg_replace('#<style(.*?)>(.*?)</style>#is', '', $html);
       $html = strip_tags($html);
 
       ?>
