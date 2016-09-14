@@ -34,7 +34,7 @@ p, blockquote, h1, h2, h3, h4, h5, h6, ul, ol { margin-bottom: 24px; line-height
     #header-top-inner h1 a { color: #1E9674; text-decoration: none; }
     #header-top-inner h1 a:hover { color: #27C497;}
     #header-top-inner #avatar { position: absolute; left: 0px; bottom: -30px; height: 100px; width: 100px; border-radius: 50px;
-        background: url('http://www.gravatar.com/avatar/e8e70f271f3fd60904670f8b1a241141.png?size=100') no-repeat; border: 1px solid #999;}
+        background: url('https://www.gravatar.com/avatar/e8e70f271f3fd60904670f8b1a241141.png?size=100') no-repeat; border: 1px solid #999;}
     #header-top-inner nav { right: 0; bottom: -4px; position: absolute;}
     #header-contact { position: absolute; right: 0px; top: 0px; font-size: 14px; background: #FFF; padding: 5px 20px; line-height: 20px; top: -100px; transition: top 0.2s;}
     #header-contact.contact-activated { top: 0;}
@@ -61,7 +61,7 @@ p, blockquote, h1, h2, h3, h4, h5, h6, ul, ol { margin-bottom: 24px; line-height
     #header-top-inner nav ul { margin: 0; padding: 0;}
     #header-top-inner nav li:first-child { margin-left: 0;}
     #header-top-inner #avatar { position: absolute; right: 0px; top: -10px; height: 60px; width: 60px; border-radius: 50px; 
-        background: url('http://www.gravatar.com/avatar/e8e70f271f3fd60904670f8b1a241141.png?size=200') no-repeat; background-size: cover; border: 1px solid #999;}
+        background: url('https://www.gravatar.com/avatar/e8e70f271f3fd60904670f8b1a241141.png?size=200') no-repeat; background-size: cover; border: 1px solid #999;}
     
     #header-contact { max-height: 0px; overflow: hidden; transition: max-height 0.4s; line-height: 24px;}
     #header-contact.contact-activated { max-height: 100px; }

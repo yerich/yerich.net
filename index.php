@@ -1,7 +1,7 @@
 <? include("header.php"); ?>
     <div class="blog-posts">
     <?php
-    $blogposts = explode("\n", file_get_contents("blog.txt"));
+    $blogposts = explode("\n", file_get_contents("blogposts.txt"));
     
     foreach($blogposts as $post) {
         if(!$post || $post[0] === "1") continue;

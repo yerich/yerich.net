@@ -1,5 +1,5 @@
 <? 
-$blogposts = explode("\n", file_get_contents("blog.txt"));
+$blogposts = explode("\n", file_get_contents("blogposts.txt"));
 $post = false;
 foreach($blogposts as $p) {
     if(!$p) continue;
@@ -12,7 +12,7 @@ foreach($blogposts as $p) {
 
 if (!$post) {
     header("HTTP/1.0 404 Not Found");
-    print("404 Page not found. <a href='/'>Homepage</a>");
+    print("404 Page " . $_GET['name'] . " not found. <a href='/'>Homepage</a>");
     die();
 }
 
