@@ -11,7 +11,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>';
     <copyright>Copyright Richard Ye. Licensed under the MIT license unless otherwise specified.</copyright>
 
     <?php
-    $blogposts = explode("\n", file_get_contents("blog.txt"));
+    $blogposts = explode("\n", file_get_contents("blogposts.txt"));
     $i = 0;
     foreach($blogposts as $post) {
       if ($i > 10) break;
