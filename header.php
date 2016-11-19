@@ -43,7 +43,7 @@
         </div>
 
         <div id="tagline">
-            PC gaming enthusiast doing software development at Riot Games. Words are my own.
+            Gamer and software developer at Riot Games. Words are my own.
         </div>
     </header>
 
