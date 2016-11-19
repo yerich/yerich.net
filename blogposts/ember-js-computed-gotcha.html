@@ -15,7 +15,7 @@ let Person = Ember.Object.extend({
 </code></pre></p>
 
 <p>
-  <code class="language-javascript">Person.get('fullName')</code> evaluates to <code class="language-javascript">'Betty Jones'</code>. The value is cached until first or last name is changed. But for this to work, we need to manually list out the properties that <code class="language-javascript">fullName</code> depended on. Listing out all of the properties a computed depends on like this can be fairly tedious task. It can be tempting to skip a few, espeically if you can say to yourself that certain properties would always change together. For instance, say we want to add another computed property:
+  <code class="language-javascript">Person.get('fullName')</code> evaluates to <code class="language-javascript">'Betty Jones'</code>. The value is cached until <code class="language-javascript">firstName</code> or <code class="language-javascript">lastName</code> is changed. But for this to work, we need to manually list out the properties that <code class="language-javascript">fullName</code> depended on. Listing out all of the properties a computed depends on like this can be a fairly tedious task. It can be tempting to skip a few, espeically if you can say to yourself that certain properties would always change together. For instance, say we want to add another computed property:
 </p>
 
 <p><pre class="code"><code class="language-javascript">
@@ -30,12 +30,12 @@ Person.reopen({
 </code></pre></p>
 
 <p>
-  It seems like we have just saved ourselves some typing, right? Whenever <code class="language-javascript">firstName</code> or <code class="language-javascript">lastName</code> changes, <code class="language-javascript">fullName</code> is assured to change. Though the output would be correct for now, this post is about why this is a <strong>bad idea</strong>, since this will not always be the case. There is a big gotcha that can happen if you do this, which manifests itself as computed properties not getting updated.
+  Whenever <code class="language-javascript">firstName</code> or <code class="language-javascript">lastName</code> changes, <code class="language-javascript">fullName</code> is assured to change. It seems like we have just saved ourselves some typing, right? Though the output would be correct for now, this post is about why this is a <strong>bad idea</strong>, since this will not always be the case. There is a big gotcha that can happen if you do this, which manifests itself as computed properties not getting updated.
 </p>
 <!--/summary-->
 
 <p>
-  To illustrate an instance of this gotcha in action, let's suppose we have a cut-down shopping cart with a subtotal and taxes.We also make a formatted subtotal variable that is just the subtotal with a dollar sign prepended to it. Taxes only change when the subtotal changes, so we're going to make a formatted subtotal depend on only the taxes:
+  To illustrate an instance of this gotcha in action, let's suppose we have a cut-down shopping cart with a subtotal and taxes. We also make another computed property that is just the subtotal with a dollar sign prepended to it. Taxes only change when the subtotal changes, so we're going to make a formatted subtotal depend on only the taxes:
 </p>
 
 <p>
@@ -75,9 +75,9 @@ Person.reopen({
 </p>
 
 <p>
-  Again, this example may seem fairly contrieved. However, in larger Ember applications it is easy to make these simple oversights in dependent properties, and the bug may not manifest itself until a seemingly unreleated change. If we get rid of the call to <code class="language-javascript">this.get('displayedSubtotal');</code>, everything seems to work fine. However, adding any such call between the two <code class="language-javascript">this.set('subTotal', this.get('subTotal') + 100);</code> would cause this bug to appear. Imagine if you added some logging that makes the get call <code class="language-javascript">'subTotal'</code> changed. This would cause the bug to suddently appear, and it's a very strange occurence to have logging create a bug in the main application logic. It could also be very unintuitive to look for computed property declaration oversights when this happens.
+  Again, this example may seem fairly contrieved. However, in larger Ember applications it is easy to make these simple oversights in dependent properties, and the bug may not manifest itself until a seemingly unreleated change is made. If we get rid of the call to <code class="language-javascript">this.get('displayedSubtotal');</code>, everything seems to work fine. However, adding any such call between the two <code class="language-javascript">this.set('subTotal', this.get('subTotal') + 100);</code> would cause this bug to reappear. Imagine if you added some logging that makes the get call <code class="language-javascript">'subTotal'</code> changed. This would cause the bug to suddenly appear again, and it's a very strange occurence to have logging create a bug in the main application logic. It could also be very unintuitive to look for computed property declaration oversights when this happens.
 </p>
 
 <p>
-  Because of the potential unintuitive buggy behaviour, it is most definitely best practise to ensure all Ember computed properties have their dependencies properly declared, even if it can sometimes seem like missing one could not make a difference.
+  Because of the potential unintuitive buggy behaviour, it is Ember.js best practise to ensure all computed properties have their dependencies properly declared, even if it can sometimes seem like missing one could not make a difference.
 </p>
