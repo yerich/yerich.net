@@ -1,0 +1,50 @@
+    <link rel="stylesheet" type="text/css" href="../style.css" />
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/prism/0.0.1/prism.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
+<section id="main">
+<!--summary-->
+<p>
+  <a href="https://guides.emberjs.com/v2.9.0/object-model/computed-properties/">Ember.js computed properties</a> are a powerful feature of the <a href="https://emberjs.com">Ember.js</a> framework that is essentially an abstraction around a property getter (with built-in caching). The body of the computed property is evaluated whenever the value is requested; the returned value is cached until one of the other properties that is depended on changes. For instance consider the following simple Ember object:
+</p>
+
+<p><pre class="code"><code class="language-javascript">
+let Person = Ember.Object.extend({
+  firstName: 'Betty',
+  lastName: 'Jones',
+
+  fullName: Ember.computed('firstName', 'lastName', function() {
+    return `${this.get('firstName')} ${this.get('lastName')}`;
+  })
+});
+</code></pre></p>
+
+<p>
+  <code class="language-javascript">Person.get('fullName')</code> evaluates to <code class="language-javascript">'Betty Jones'</code>. The value is cached until first or last name is changed. But for this to work, we need to manually list out the properties that <code class="language-javascript">fullName</code> depended on. Listing out all of the properties a computed depends on like this can be fairly tedious task. It can be tempting to skip a few, espeically if you can say to yourself that certain properties would always change together. For instance, say we want to convert our object to JSON by adding another computed property:
+</p>
+
+<p><pre class="code"><code class="language-javascript">
+Person.reopen({
+  json: Ember.computed('firstName', 'lastName', function() {
+    return JSON.stringify({
+      firstName: this.get('firstName'),
+      lastName: this.get('lastName'),
+      fullName: this.get('fullName')
+    })
+  })
+});
+</code></pre></p>
+
+<p>
+  We have dropped <code class="language-javascript">fullName</code> from our list of properties, because it only changes when <code class="language-javascript">firstName</code> or <code class="language-javascript">lastName</code> changes. Since <code class="language-javascript">fullName</code> only changes when the other two change, listing it as an additional dependency seems redundant, right? This post is about why this is a <strong>bad idea</strong>. There is a big gotcha that can happen if you do this, which manifests itself as computed properties keeping their caches for longer than they should, causing values to get stuck in non-sensical states.
+</p>
+<!--/summary-->
+
+<p>
+  To illustrate an instance of this gotcha in action, let's suppose we have a cut-down shopping cart with a subtotal, taxes and grand total. Taxes only change when the subtotal changes, so we're going to make the grand total depend on only the taxes:
+</p>
+
+<div style="position: relative; height: 0px; overflow: hidden; max-width: 100%; padding-bottom: 56.25%;"><iframe src="https://ember-twiddle.com/663dbcd5e7a14f90f81c11addc772031?fullScreen=true" style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%;"></iframe></div>
+
+</section>
