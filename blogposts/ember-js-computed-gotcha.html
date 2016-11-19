@@ -1,9 +1,3 @@
-    <link rel="stylesheet" type="text/css" href="../style.css" />
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/prism/0.0.1/prism.js"></script>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.7.1/js/lightbox.min.js"></script>
-<section id="main">
 <!--summary-->
 <p>
   <a href="https://guides.emberjs.com/v2.9.0/object-model/computed-properties/">Ember.js computed properties</a> are a powerful feature of the <a href="https://emberjs.com">Ember.js</a> framework that is essentially an abstraction around a property getter (with built-in caching). The body of the computed property is evaluated whenever the value is requested; the returned value is cached until one of the other properties that is depended on changes. For instance consider the following simple Ember object:
@@ -21,30 +15,69 @@ let Person = Ember.Object.extend({
 </code></pre></p>
 
 <p>
-  <code class="language-javascript">Person.get('fullName')</code> evaluates to <code class="language-javascript">'Betty Jones'</code>. The value is cached until first or last name is changed. But for this to work, we need to manually list out the properties that <code class="language-javascript">fullName</code> depended on. Listing out all of the properties a computed depends on like this can be fairly tedious task. It can be tempting to skip a few, espeically if you can say to yourself that certain properties would always change together. For instance, say we want to convert our object to JSON by adding another computed property:
+  <code class="language-javascript">Person.get('fullName')</code> evaluates to <code class="language-javascript">'Betty Jones'</code>. The value is cached until first or last name is changed. But for this to work, we need to manually list out the properties that <code class="language-javascript">fullName</code> depended on. Listing out all of the properties a computed depends on like this can be fairly tedious task. It can be tempting to skip a few, espeically if you can say to yourself that certain properties would always change together. For instance, say we want to add another computed property:
 </p>
 
 <p><pre class="code"><code class="language-javascript">
 Person.reopen({
-  json: Ember.computed('firstName', 'lastName', function() {
+  json: Ember.computed('fullName', function() {
     return JSON.stringify({
       firstName: this.get('firstName'),
-      lastName: this.get('lastName'),
-      fullName: this.get('fullName')
+      lastName: this.get('lastName')
     })
   })
 });
 </code></pre></p>
 
 <p>
-  We have dropped <code class="language-javascript">fullName</code> from our list of properties, because it only changes when <code class="language-javascript">firstName</code> or <code class="language-javascript">lastName</code> changes. Since <code class="language-javascript">fullName</code> only changes when the other two change, listing it as an additional dependency seems redundant, right? This post is about why this is a <strong>bad idea</strong>. There is a big gotcha that can happen if you do this, which manifests itself as computed properties keeping their caches for longer than they should, causing values to get stuck in non-sensical states.
+  It seems like we have just saved ourselves some typing, right? Whenever <code class="language-javascript">firstName</code> or <code class="language-javascript">lastName</code> changes, <code class="language-javascript">fullName</code> is assured to change. Though the output would be correct for now, this post is about why this is a <strong>bad idea</strong>, since this will not always be the case. There is a big gotcha that can happen if you do this, which manifests itself as computed properties not getting updated.
 </p>
 <!--/summary-->
 
 <p>
-  To illustrate an instance of this gotcha in action, let's suppose we have a cut-down shopping cart with a subtotal, taxes and grand total. Taxes only change when the subtotal changes, so we're going to make the grand total depend on only the taxes:
+  To illustrate an instance of this gotcha in action, let's suppose we have a cut-down shopping cart with a subtotal and taxes.We also make a formatted subtotal variable that is just the subtotal with a dollar sign prepended to it. Taxes only change when the subtotal changes, so we're going to make a formatted subtotal depend on only the taxes:
 </p>
 
-<div style="position: relative; height: 0px; overflow: hidden; max-width: 100%; padding-bottom: 56.25%;"><iframe src="https://ember-twiddle.com/663dbcd5e7a14f90f81c11addc772031?fullScreen=true" style="position: absolute; top: 0px; left: 0px; width: 100%; height: 100%;"></iframe></div>
+<p>
+  <a class="jsbin-embed" href="http://jsbin.com/putajixuqe/1/embed?html,js,output&height=400px">JS Bin on jsbin.com</a><script src="http://static.jsbin.com/js/embed.min.js?3.40.2"></script>
+</p>
 
-</section>
+<p>
+  Note that is this the same concept we used for the Person example above. Clicking "Add 100" increases the subtotal by 100 (try it out). In this example, we get away with not having the proper dependencies on <code class="language-javascript">displayedSubtotal</code>, and everything seems to work as it should. But let's see what happens when we make a small change and remove the display of taxes:
+</p>
+
+<p>
+  <a class="jsbin-embed" href="http://jsbin.com/mevalegage/1/embed?html,js,output&height=400px">JS Bin on jsbin.com</a><script src="http://static.jsbin.com/js/embed.min.js?3.40.2"></script>
+</p>
+
+<p>
+  <code class="language-javascript">displayedSubtotal</code> doesn't update anymore! To understand why, we must realize that computed properties are not evaluated unless something explicitly requests the property, e.g. a call to <code class="language-javascript">Ember.get</code> or a reference to the property in a template. Since nothing in the second example calls the getter on <code class="language-javascript">taxes</code>, Ember doesn't maintain a cached value for it. Thus the cached value <code class="language-javascript">displayedSubtotal</code> is never invalidated because it only happens when the cached value <code class="language-javascript">taxes</code> gets invalidated, and there is never a cached value to invalidate. If the dependent properties of <code class="language-javascript">displayedSubtotal</code> are listed correctly as <code class="language-javascript">'subTotal'</code>, this bug is prevented.
+</p>
+
+<p>
+  Though this example seems a bit contrived, it's actually fairly easy to get encounter due to the sheer number of computed properties a large application can have, and because Ember doesn't emit any warnings about computed properties not having their dependencies listed properly. Additionally, this bug may stay under the radar until a seemingly unrelated change is made (e.g. a modification to a template, an observer, or anything else that calls a getter on our faulty property's dependencies). If you ever encounter a change which cases a computed property to stop updating, be sure to comb through your computed properties for incorrectly listed dependencies, even if the property is seemingly unrelated to the change.
+</p>
+
+<p>
+  This gotcha can manifest in other subtle ways, such as in the following example:
+</p>
+
+<p>
+  <a class="jsbin-embed" href="http://jsbin.com/yoxoyiriwu/1/embed?html,js,output&height=400px">JS Bin on jsbin.com</a><script src="http://static.jsbin.com/js/embed.min.js?3.40.2"></script>
+</p>
+
+<p>
+  Here, we have the faulty <code class="language-javascript">displayedSubtotal</code> property as before, but <code class="language-javascript">taxes</code> is being evaluated and displayed. Clicking 'Add 200' will add 100 to the subtotal twice, but <code class="language-javascript">displayedSubtotal</code> seems to lag behind by 100 &mdash; very strange behaviour indeed. Here, though <code class="language-javascript">taxes</code> is being evaluated, it is only done during the rendering of the template, after both add operations have taken place.
+</p>
+
+<p>
+  The call to <code class="language-javascript">this.get('displayedSubtotal');</code> in the middle of the two operations refreshes the cached value of <code class="language-javascript">displayedSubtotal</code>. At this time, <code class="language-javascript">taxes</code> has an unknown value &mbash; the cache has expired and nothing calls its getter to refresh it. When the second add operation takes place, the cached value <code class="language-javascript">taxes</code> would usually be once again invalidated, and <code class="language-javascript">displayedSubtotal</code>, being a dependent property, would get recomputed. However, Ember does not invalidate caches if a dependent property goes from one unknown value to another, as <code class="language-javascript">taxes</code> does here. Thus, <code class="language-javascript">displayedSubtotal</code> doesn't get recomputed a second time and remains stuck one value behind.
+</p>
+
+<p>
+  Again, this example may seem fairly contrieved. However, in larger Ember applications it is easy to make these simple oversights in dependent properties, and the bug may not manifest itself until a seemingly unreleated change. If we get rid of the call to <code class="language-javascript">this.get('displayedSubtotal');</code>, everything seems to work fine. However, adding any such call between the two <code class="language-javascript">this.set('subTotal', this.get('subTotal') + 100);</code> would cause this bug to appear. Imagine if you added some logging that makes the get call <code class="language-javascript">'subTotal'</code> changed. This would cause the bug to suddently appear, and it's a very strange occurence to have logging create a bug in the main application logic. It could also be very unintuitive to look for computed property declaration oversights when this happens.
+</p>
+
+<p>
+  Because of the potential unintuitive buggy behaviour, it is most definitely best practise to ensure all Ember computed properties have their dependencies properly declared, even if it can sometimes seem like missing one could not make a difference.
+</p>

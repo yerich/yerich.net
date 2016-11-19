@@ -1,3 +1,4 @@
+2016-11-19||ember-js-computed-gotcha||Avoid an insidious Ember.js gotcha by always properly listing all the dependencies of a computed property
 2015-11-07||tpp-intellectual-property-summary||A summary of the Intellectual Property section of the Trans Pacific Partnership Treaty
 2015-01-16||bezier-curve-animation-using-d3||Bezier curve animation using D3.js
 2015-01-13||text-outline-browser-workaround||Making text more readable on images using a <code>text-outline</code> workaround
