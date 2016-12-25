@@ -1,0 +1,61 @@
+<!--summary-->
+<p>
+    <strong>TL;DR: </strong> Sprinkle a quick <code>window.q = this</code> into your JS file for a quick and easy way to debug from
+    your browser's dev tools.
+</p>
+
+<p>
+    Modern JS techniques generally prohibit application code from adding or modifying global variables, so the scope of various
+    classes that contain an applications state and functionality are not directly accessible from a browser's debug console. This
+    is an annoyance for debugging.
+</p>
+<!--/summary-->
+
+<p>
+    For instance, a simple top-level React component may look like:
+</p>
+
+<pre class="code"><code class="language-javascript">
+class MyApp extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      value: null,
+    };
+  }
+  ...
+}
+</code></pre>
+
+<p>
+    There's no way to access <code>MyApp.state</code> from the browser's dev tools. The obvious way to do this is to put in a breakpoint
+    or a watch, but what if you want the scope to be always accessible directly from the console, so you can always inspect state
+    or execute any arbitrary method? The simpliest way that I have learned to this is just to add something like <code>window.q = this</code>
+    inside the <code>constructor()</code> (feel free to replace the name with whatever you want). 
+</p>
+
+<pre class="code"><code class="language-javascript">
+class MyApp extends React.Component {
+  constructor() {
+    window.q = this;
+    super();
+    this.state = {
+      value: null,
+    };
+  }
+  ...
+}
+</code></pre>
+
+<p>
+    It has no real effect on the execution of the code, doesn't cause execution to stop or anything
+    and is very trivial to set up (particularly if finding the right line to break on is difficult). It gives you easy access to an arbitrary scope,
+    anywhere in your project.
+</p>
+
+<p>
+    Sometimes the solution which seems hacky is perfectly viable, especially if you're just debugging something. Just be sure to remove
+    the line before committing your code!
+</p>
+
+<!--/summary-->
