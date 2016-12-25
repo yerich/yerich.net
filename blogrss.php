@@ -36,7 +36,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>';
       <item>
         <title><?= $title ?></title>
         <description><?= $html ?>.</description>
-        <link><a href="/blog/<?= $post[1] ?>"><?= $title ?></a></link>
+        <link><a href="https://www.yerich.net/blog/<?= $post[1] ?>"><?= $title ?></a></link>
         <pubDate><?= date("r", $date) ?></pubDate>
       </item>
     <? } ?>
